@@ -1,0 +1,24 @@
+Last login: Tue Feb  2 08:35:10 on console
+nick@nicks-mbp ~ % >....                                                        
+            self.best = np.Inf
+        elif mode == 'max':
+            self.monitor_op = np.greater
+            self.best = -np.Inf
+        else:
+            if 'acc' in self.monitor:
+                self.monitor_op = np.greater
+                self.best = -np.Inf
+            else:
+                self.monitor_op = np.less
+                self.best = np.Inf
+
+    def get_best(self):
+        return self.best_weights
+
+    def on_epoch_end(self, epoch, logs={}):
+        current = logs.get(self.monitor)
+        if current is not None and self.monitor_op(current, self.best):
+            self.best_weights = self.model.get_weights()
+            if self.verbose > 0:
+                print("Epoch {}: {} improved from {} to {}".format(epoch, self.monitor, self.best, current))
+            self.best = current
